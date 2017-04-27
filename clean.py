@@ -10,11 +10,11 @@ import os
 # Need the scikit-image module
 from skimage import io, transform
 from glob import glob
-#from skimage.filter import sobel
-#from skimage.morphology import watershed
 from scipy import ndimage
 #from skimage.util.montage import montage2d
-from PIL import Image
+from subprocess import call
+from tempfile import mkdtemp
+from shutil import rmtree
 
 def get_mask(img, pad=0):
     '''Compute a mask to within pad voxels of non-zero data.'''
@@ -40,9 +40,9 @@ def crop(img, mask, pad=0):
 imdir = '/home/bobd/git/mindstrong/neuropsych/experiments/face_morph/images_raw/'
 dirs = glob(os.path.join(imdir, '*_c'))
 
-outbase = '/home/bobd/git/mindstrong/neuropsych/experiments/face_morph/cleaned_webp/'
+outbase = 'cleaned/'
 
-out_sz = (250,200)
+out_sz = (300,240)
 all_mask = 0
 print('Generating mask...')
 for d in dirs:
@@ -54,7 +54,9 @@ for d in dirs:
 
 print('Cropping images...')
 for d in dirs:
-    print('  %s...' % os.path.basename(d))
+    dirname = os.path.basename(d)
+    print('  %s...' % dirname)
+    tmpdir = mkdtemp()
     frames = glob(os.path.join(d,'*.png'))
     outdir = os.path.join(outbase, os.path.basename(d))
     if not os.path.exists(outdir):
@@ -62,7 +64,17 @@ for d in dirs:
     for f in frames:
         img = crop(io.imread(f), all_mask, pad=-10)
         img = transform.resize(img, out_sz, order=5)
-        #io.imsave(os.path.join(outdir, os.path.basename(f)[:-3]+'jpg'), img)
-        im = Image.fromarray((img*255).round().astype(np.uint8), 'RGBA')
-        im.save(os.path.join(outdir, os.path.basename(f)[:-3]+'webp'), "WEBP", quality=75)
+        bn = os.path.basename(f)[:-3]
+        io.imsave(os.path.join(tmpdir, bn+'png'), img)
+        if bn=='frame001.':
+            io.imsave(os.path.join(outdir, 'neutral.jpg'), img)
+        elif bn=='frame050.':
+            io.imsave(os.path.join(outdir, dirname+'.jpg'), img)
+
+    call(['ffmpeg','-framerate','5','-i',os.path.join(tmpdir,'frame%03d.png'),'-c:v','libx264','-preset','slow','-crf','24','-vf','fps=5','-pix_fmt', 'yuv420p',os.path.join(outdir,dirname+'.mp4')])
+    rmtree(tmpdir)
+
+
+dirs=glob('*')
+for d in dirs: os.rename(d+'/neutral.jpg',d[:4]+'ne'+d[6:]+'.jpg')
 
