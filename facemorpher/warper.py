@@ -32,10 +32,10 @@ def grid_coordinates(points):
   :param points: points to generate grid coordinates
   :returns: array of (x, y) coordinates
   """
-  xmin = np.min(points[:, 0])
-  xmax = np.max(points[:, 0]) + 1
-  ymin = np.min(points[:, 1])
-  ymax = np.max(points[:, 1]) + 1
+  xmin = np.min(points[:, 0]).astype(np.uint32)
+  xmax = np.max(points[:, 0]).astype(np.uint32) + 1
+  ymin = np.min(points[:, 1]).astype(np.uint32)
+  ymax = np.max(points[:, 1]).astype(np.uint32) + 1
   return np.asarray([(x, y) for y in range(ymin, ymax)
                      for x in range(xmin, xmax)], np.uint32)
 

@@ -37,7 +37,7 @@ def crop(img, mask, pad=0):
     return img
 
 
-imdir = '/home/bobd/git/mindstrong/neuropsych/experiments/face_morph/images_raw/'
+imdir = '/home/bobd/git/mindstrong/neuropsych_OLD/experiments/face_morph/images_raw/'
 dirs = glob(os.path.join(imdir, '*_c'))
 
 outbase = 'cleaned/'
@@ -71,7 +71,7 @@ for d in dirs:
         elif bn=='frame050.':
             io.imsave(os.path.join(outdir, dirname+'.jpg'), img)
 
-    call(['ffmpeg','-framerate','5','-i',os.path.join(tmpdir,'frame%03d.png'),'-c:v','libx264','-preset','slow','-crf','24','-vf','fps=5','-pix_fmt', 'yuv420p',os.path.join(outdir,dirname+'.mp4')])
+    call(['ffmpeg','-movflags','faststart','-framerate','5','-i',os.path.join(tmpdir,'frame%03d.png'),'-c:v','libx264','-preset','slow','-crf','24','-vf','fps=5','-pix_fmt', 'yuv420p',os.path.join(outdir,dirname+'.mp4')])
     rmtree(tmpdir)
 
 

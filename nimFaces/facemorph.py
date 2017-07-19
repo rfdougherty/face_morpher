@@ -22,9 +22,9 @@ if not os.path.exists(outdir):
 w = 500
 h = 600
 nframes = 52
-emotions = ['ha','sa','an']#,'fe','di']
+emotions = ['ha','sa','an','fe']#,'di']
 mouth = 'c'
-col_nums = [5,7,1,4,3]
+col_nums = [5,7,1,4]#,3]
 val = np.genfromtxt(os.path.join(imdir,'validity.csv'), delimiter=',',skip_header=1, missing_values=' ')
 rel = np.genfromtxt(os.path.join(imdir,'reliability.csv'), delimiter=',',skip_header=1, missing_values=' ')
 sc = np.hstack((val[:,0][:,None],val[:,1:] * rel[:,1:]))[:,[0]+col_nums]

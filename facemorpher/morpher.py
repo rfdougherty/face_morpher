@@ -54,10 +54,10 @@ def verify_args(args):
 def load_image_points(path, size):
   img = scipy.ndimage.imread(path)[..., :3]
   points = locator.face_points(path)
-  # Add image boundary points
-  x,y = np.meshgrid([0,size[0]/2,size[0]],[0,size[1]/2,size[1]])
-  im_edge_points = np.vstack((y.flatten(),x.flatten())).T
-  points = np.vstack((points,im_edge_points))
+  ## Add image boundary points
+  #x,y = np.meshgrid([0,size[0]/2,size[0]],[0,size[1]/2,size[1]])
+  #im_edge_points = np.vstack((y.flatten(),x.flatten())).T
+  #points = np.vstack((points,im_edge_points))
 
   if len(points) == 0:
     print('No face in %s' % path)
