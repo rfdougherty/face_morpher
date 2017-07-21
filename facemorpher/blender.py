@@ -3,13 +3,17 @@ import cv2
 import numpy as np
 import scipy.sparse
 
-def mask_from_points(size, points):
-  radius = 10  # kernel size
+def mask_from_points(size, points, ellipse=True, radius = 20):
+  # radius defines the erode kernel size
   kernel = np.ones((radius, radius), np.uint8)
 
   mask = np.zeros(size, np.uint8)
-  cv2.fillConvexPoly(mask, cv2.convexHull(points), 255)
-  mask = cv2.erode(mask, kernel)
+  if ellipse:
+    cv2.ellipse(mask,cv2.fitEllipse(points),255,-1)
+    mask = cv2.dilate(mask, kernel)
+  else:
+    cv2.fillConvexPoly(mask, cv2.convexHull(points), 255)
+    mask = cv2.erode(mask, kernel)
 
   return mask
 
